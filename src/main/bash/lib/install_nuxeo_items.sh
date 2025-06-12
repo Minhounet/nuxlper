@@ -23,13 +23,13 @@ readonly CONF_FILENAME="$(basename ${0%.sh}).conf"
 readonly CONF_PATH="$SCRIPT_DIR/$CONF_FILENAME"
 
 function main() {
-  source "$SCRIPT_DIR/loggers.sh"
+  load_loggers_lib
 
   if [[ $# -ge 1 ]]; then
     case "$1" in
     --help|-h) display_help;;
     --reload|-r)
-    source "$SCRIPT_DIR"/nuxeo.sh
+    load_nuxeo_lib
     perform_nuxeo_hot_reload;;
     *) error_and_fail "Unknown command $1" ;;
     esac
@@ -40,7 +40,7 @@ function main() {
     error_and_fail "File $CONF_FILENAME is missing, please create it and configure it. $0 --help for more information"
   fi
 
-  source "$SCRIPT_DIR/nuxeo.sh"
+  load_all_libs
 }
 
 # ======================================================================================================================
@@ -65,5 +65,19 @@ function display_help() {
   🎯 --help or -h to display this help"
   echo "-------------------------------------------------------------------------------------------------------------"
 }
+
+function load_nuxeo_lib() {
+  source "$SCRIPT_DIR"/nuxeo.sh
+}
+function load_loggers_lib() {
+  source "$SCRIPT_DIR/loggers.sh"
+}
+function load_all_libs() {
+  # 💡no need to load loggers as it already done in main.
+  # shellcheck disable=SC1090
+  source "${CONF_PATH}"
+  load_nuxeo_lib
+}
 # ======================================================================================================================
 main "$@"
+# ================================== NOTHING BELOW PLEASE!==============================================================
