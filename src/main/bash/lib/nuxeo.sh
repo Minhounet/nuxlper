@@ -35,3 +35,23 @@ function perform_nuxeo_hot_reload() {
     error_and_fail "Failed to detect 'Studio package installed' after $max_retries attempts."
   fi
 }
+
+function stop_nuxeo_server() {
+  echo "🛑Stop local server.."
+  docker exec "$1" sh -c "nuxeoctl stop"
+  ok
+}
+
+function start_nuxeo_server() {
+  echo "🟢Start local server.."
+  docker exec "$1" sh -c "nuxeoctl start"
+  ok
+}
+
+function remove_nuxeo_module() {
+  docker exec "$1" sh -c "nuxeoctl mp-remove --accept yes $2 || true"
+}
+
+function install_nuxeo_module() {
+  docker exec "$1" sh -c "nuxeoctl mp-install --accept yes $2"
+}

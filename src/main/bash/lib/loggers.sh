@@ -41,3 +41,23 @@ function hint() {
   fi
   echo "💡$1"
 }
+
+function log_delete() {
+  echo "❌$*"
+}
+
+function log_clean() {
+  echo "🗑️$*"
+}
+
+function log_download() {
+  echo "⬇️$*"
+}
+
+function log_upload() {
+  echo "⬆️$*"
+}
+
+function log_install() {
+  echo "💻$*"
+}
