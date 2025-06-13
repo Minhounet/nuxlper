@@ -49,16 +49,16 @@ function main() {
   load_all_libs
   test_custom_modules_existence
 
-  stop_nuxeo_server "$NUXLPER_DOCKER_CONTAINER_NAME"
+  stop_nuxeo_server "$NUXLPER_NUXEO_CONTAINER_NAME"
 
   log_delete "Remove Studio bundle"
-  remove_nuxeo_module "$NUXLPER_DOCKER_CONTAINER_NAME" "$NUXLPER_NUXEO_STUDIO_MODULE"
+  remove_nuxeo_module "$NUXLPER_NUXEO_CONTAINER_NAME" "$NUXLPER_NUXEO_STUDIO_MODULE"
   ok
   remove_custom_modules
 
   log_clean "️Clean /tmp/nuxeo folder"
-  execute_in_container "$NUXLPER_DOCKER_CONTAINER_NAME" "mkdir -p /tmp/nuxeo"
-  execute_in_container "$NUXLPER_DOCKER_CONTAINER_NAME" "rm -rf /tmp/nuxeo/*"
+  execute_in_container "$NUXLPER_NUXEO_CONTAINER_NAME" "mkdir -p /tmp/nuxeo"
+  execute_in_container "$NUXLPER_NUXEO_CONTAINER_NAME" "rm -rf /tmp/nuxeo/*"
   ok
 
   install_marketplace_modules
@@ -66,7 +66,7 @@ function main() {
   upload_custom_modules
   install_custom_modules
 
-  start_nuxeo_server "$NUXLPER_DOCKER_CONTAINER_NAME"
+  start_nuxeo_server "$NUXLPER_NUXEO_CONTAINER_NAME"
 }
 
 # ======================================================================================================================
@@ -78,7 +78,7 @@ function display_help() {
   🎯 Create $CONF_FILENAME and add the variables:
   - NUXLPER_DOCKER_IMAGE_NAME (mandatory): the Nuxeo Docker.
   Pull it with \"docker pull docker-private.packages.nuxeo.com/nuxeo/nuxeo:2025\" for instance.
-  - NUXLPER_DOCKER_CONTAINER_NAME (mandatory): the name of your Nuxeo Docker container. In other terms, this is the name
+  - NUXLPER_NUXEO_CONTAINER_NAME (mandatory): the name of your Nuxeo Docker container. In other terms, this is the name
   you give when you run the Nuxeo image.
   💡If you don't know Docker, see https://docs.docker.com/get-started/
   - NUXLPER_NUXEO_STUDIO_MODULE (mandatory): name of your studio project
@@ -111,7 +111,7 @@ function remove_custom_modules() {
   log_delete "Remove custom modules"
   for entry in $NUXLPER_NUXEO_MODULES; do
     module_name="${entry%%:*}"
-    remove_nuxeo_module "$NUXLPER_DOCKER_CONTAINER_NAME" "${module_name}"
+    remove_nuxeo_module "$NUXLPER_NUXEO_CONTAINER_NAME" "${module_name}"
   done
   ok
 }
@@ -122,8 +122,8 @@ function upload_custom_modules() {
       module_name="${entry%%:*}"
       module_path="${entry#*:}"
       zip_name="$module_name.zip"
-      copy_to_container "$NUXLPER_DOCKER_CONTAINER_NAME"  "$module_path" "/tmp/$zip_name"
-      execute_in_container_as_root "$NUXLPER_DOCKER_CONTAINER_NAME"  "chown nuxeo: /tmp/$zip_name"
+      copy_to_container "$NUXLPER_NUXEO_CONTAINER_NAME"  "$module_path" "/tmp/$zip_name"
+      execute_in_container_as_root "$NUXLPER_NUXEO_CONTAINER_NAME"  "chown nuxeo: /tmp/$zip_name"
     done
   ok
 }
@@ -133,7 +133,7 @@ function install_custom_modules() {
   for entry in $NUXLPER_NUXEO_MODULES; do
     module_name="${entry%%:*}"
     zip_name="$module_name.zip"
-    install_nuxeo_module "$NUXLPER_DOCKER_CONTAINER_NAME" "/tmp/$zip_name"
+    install_nuxeo_module "$NUXLPER_NUXEO_CONTAINER_NAME" "/tmp/$zip_name"
   done
   ok
 }
@@ -141,14 +141,14 @@ function install_custom_modules() {
 function install_marketplace_modules() {
   log_download "Install $NUXLPER_NUXEO_MARKETPLACE_MODULES from marketplace.."
   for entry in $NUXLPER_NUXEO_MARKETPLACE_MODULES; do
-    install_nuxeo_module "$NUXLPER_DOCKER_CONTAINER_NAME" "$entry"
+    install_nuxeo_module "$NUXLPER_NUXEO_CONTAINER_NAME" "$entry"
   done
   ok
 }
 
 function install_studio_module() {
   log_download "Install $NUXLPER_NUXEO_STUDIO_MODULE from Studio"
-  install_nuxeo_module "$NUXLPER_DOCKER_CONTAINER_NAME" "$NUXLPER_NUXEO_STUDIO_MODULE"
+  install_nuxeo_module "$NUXLPER_NUXEO_CONTAINER_NAME" "$NUXLPER_NUXEO_STUDIO_MODULE"
   ok
 }
 
