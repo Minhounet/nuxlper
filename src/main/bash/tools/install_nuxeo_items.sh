@@ -21,7 +21,7 @@ readonly TOOLS_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 # shellcheck disable=SC2155
 readonly LIB_DIR=$(dirname "$TOOLS_DIR")/lib
 # shellcheck disable=SC2155
-readonly CONF_FILENAME="$(basename "${0%.sh}").conf"
+readonly CONF_FILENAME="nuxlper.conf"
 # shellcheck disable=SC2155
 readonly CONF_PATH=$(dirname "$TOOLS_DIR")/$CONF_FILENAME
 
