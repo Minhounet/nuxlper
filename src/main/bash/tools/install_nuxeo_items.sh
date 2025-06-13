@@ -17,11 +17,13 @@ set -o pipefail
 # Declarations
 # ======================================================================================================================
 # shellcheck disable=SC2155
-readonly SCRIPT_DIR=$(dirname "$(realpath "$0")")
+readonly TOOLS_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+# shellcheck disable=SC2155
+readonly LIB_DIR=$(dirname "$TOOLS_DIR")/lib
 # shellcheck disable=SC2155
 readonly CONF_FILENAME="$(basename "${0%.sh}").conf"
 # shellcheck disable=SC2155
-readonly CONF_PATH=$(dirname "$SCRIPT_DIR")/$CONF_FILENAME
+readonly CONF_PATH=$(dirname "$TOOLS_DIR")/$CONF_FILENAME
 
 declare NUXLPER_NUXEO_MODULES=""
 declare NUXLPER_NUXEO_MARKETPLACE_MODULES="nuxeo-web-ui nuxeo-jsf-ui platform-explorer nuxeo-api-playground"
@@ -46,12 +48,12 @@ function main() {
 
   load_all_libs
   test_custom_modules_existence
+
   stop_nuxeo_server "$NUXLPER_DOCKER_CONTAINER_NAME"
 
   log_delete "Remove Studio bundle"
   remove_nuxeo_module "$NUXLPER_DOCKER_CONTAINER_NAME" "$NUXLPER_NUXEO_STUDIO_MODULE"
   ok
-
   remove_custom_modules
 
   log_clean "️Clean /tmp/nuxeo folder"
@@ -61,10 +63,8 @@ function main() {
 
   install_marketplace_modules
   install_studio_module
-
   upload_custom_modules
   install_custom_modules
-
 
   start_nuxeo_server "$NUXLPER_DOCKER_CONTAINER_NAME"
 }
@@ -153,13 +153,13 @@ function install_studio_module() {
 }
 
 function load_nuxeo_lib() {
-  source "$SCRIPT_DIR"/nuxeo.sh
+  source "$LIB_DIR"/nuxeo.sh
 }
 function load_loggers_lib() {
-  source "$SCRIPT_DIR/loggers.sh"
+  source "$LIB_DIR/loggers.sh"
 }
 function load_docker_lib() {
-  source "$SCRIPT_DIR/docker.sh"
+  source "$LIB_DIR/docker.sh"
 }
 function load_all_libs() {
   # 💡no need to load loggers as it already done in main.
