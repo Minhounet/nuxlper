@@ -23,7 +23,7 @@ readonly CONF_FILENAME="nuxlper.conf"
 readonly CONF_PATH=$(dirname "$TOOLS_DIR")/$CONF_FILENAME
 
 readonly FAKE_SMTP_IMAGE=haravich/fake-smtp-server
-readonly FAKE_SMTP_PORT=1085
+readonly FAKE_SMTP_PORT=1025
 
 readonly SERVER_LOG_READY_PATTERN="= Component Loading Status: Pending: 0 / Missing: 0 / Unstarted: 0"
 
