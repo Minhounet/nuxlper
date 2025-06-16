@@ -23,6 +23,8 @@ readonly LIB_DIR=$(dirname "$TOOLS_DIR")/lib
 # shellcheck disable=SC2155
 readonly CONF_FILENAME="nuxlper.conf"
 # shellcheck disable=SC2155
+readonly TEMPLATES_DIR=$(dirname "$TOOLS_DIR")/templates
+# shellcheck disable=SC2155
 readonly CONF_PATH=$(dirname "$TOOLS_DIR")/$CONF_FILENAME
 
 declare NUXLPER_NUXEO_MODULES=""
@@ -75,17 +77,9 @@ function main() {
 function display_help() {
   echo "-------------------------------------------------------------------------------------------------------------"
   echo "Normal use:
-  🎯 Create $CONF_FILENAME and add the variables:
-  - NUXLPER_DOCKER_IMAGE_NAME (mandatory): the Nuxeo Docker.
-  Pull it with \"docker pull docker-private.packages.nuxeo.com/nuxeo/nuxeo:2025\" for instance.
-  - NUXLPER_NUXEO_CONTAINER_NAME (mandatory): the name of your Nuxeo Docker container. In other terms, this is the name
-  you give when you run the Nuxeo image.
-  💡If you don't know Docker, see https://docs.docker.com/get-started/
-  - NUXLPER_NUXEO_STUDIO_MODULE (mandatory): name of your studio project
-  - NUXLPER_NUXEO_MODULES (optional): the custom modules you want to install with mp-install.
-  syntax is \"moduleName1:path/to/module1Zip moduleName2:path/to/module2Zip ... moduleN:path/to/moduleNZip\".
-
-  Then you are ready to launch your $0 again!"
+  🎯 Create $CONF_FILENAME and add contents from $TEMPLATES_DIR/nuxlper.conf.install_nuxeo_items"
+  cat "$TEMPLATES_DIR"/nuxlper.conf.install_nuxeo_items
+  echo "Then you are ready to launch your $0 again!"
   echo "-------------------------------------------------------------------------------------------------------------"
   echo "miscellaneous:
   🎯 --reload or -r to perform hot reload only

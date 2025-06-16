@@ -1,0 +1,5 @@
+########################################################################################################################
+# params to execute install_nuxeo_items.sh
+########################################################################################################################
+NUXLPER_NUXEO_STUDIO_MODULE=socle-ged-nuc-edf # mandatory your studio project
+NUXLPER_NUXEO_MODULES="peppapig:/mnt/path/to/peppa.zip george:/mnt/path/to/georges.zip" # Optional

@@ -1,0 +1,25 @@
+########################################################################################################################
+# params to execute build_fresh_nuxeo_container.sh
+########################################################################################################################
+# docker part (Mandatory)
+NUXLPER_NUXEO_IMAGE=docker-private.packages.nuxeo.com/nuxeo/nuxeo:2023
+NUXLPER_PULL_NUXEO_IMAGE=y
+NUXLPER_NUXEO_CONTAINER_NAME=nuxlperxeo # Choose the name of you Nuxeo container name
+
+# Proxy (Optional)
+NUXLPER_NUXEO_PROXY_HOST=
+NUXLPER_NUXEO_PROXY_PORT=
+
+# Nuxeo registering (Mandatory) try nuxeoctl register to understand the params below
+NUXLPER_NUXEO_INSTANCE_USERNAME=
+NUXLPER_NUXEO_INSTANCE_TOKEN=
+NUXLPER_NUXEO_INSTANCE_PROJECT=
+NUXLPER_NUXEO_INSTANCE_INSTANCE_TYPE=dev
+NUXLPER_NUXEO_INSTANCE_DESCRIPTION="peppa created on $(date)"
+
+# SMTP part (mandatory)
+NUXLPER_FAKE_SMTP_CONTAINER_NAME=fake-smtp # Choose the name of you fake smtp container
+NUXLPER_SMTP_MAIL_FROM=nuxlper@noreply.com
+
+# Network (Mandatory)
+NUXLPER_NETWORK_NAME=nuxlperwork # Choose the name of you docker network to join Nuxeo and the smtp server.

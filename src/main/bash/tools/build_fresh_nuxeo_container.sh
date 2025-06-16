@@ -18,6 +18,8 @@ readonly TOOLS_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 # shellcheck disable=SC2155
 readonly LIB_DIR=$(dirname "$TOOLS_DIR")/lib
 # shellcheck disable=SC2155
+readonly TEMPLATES_DIR=$(dirname "$TOOLS_DIR")/templates
+# shellcheck disable=SC2155
 readonly CONF_FILENAME="nuxlper.conf"
 # shellcheck disable=SC2155
 readonly CONF_PATH=$(dirname "$TOOLS_DIR")/$CONF_FILENAME
@@ -70,13 +72,14 @@ function main() {
 function display_help() {
   echo "-------------------------------------------------------------------------------------------------------------"
   echo "$0 build a fresh Nuxeo environment out of the box:
-  - build a nuxeo Docker container with a few configuration in nuxeo.conf (such as proxy and jpda
-  - build a fake smtp
-  - create a network to join them
+  🎯 build a nuxeo Docker container with a few configuration in nuxeo.conf (such as proxy and jpda
+  🎯 build a fake smtp
+  🔗 create a network to join them
   "
   echo "-------------------------------------------------------------------------------------------------------------"
-  echo "$CONF_FILE must be created and contains the following entries"
-  grep  "$0"
+  echo "CONF_PATH must be created and configured"
+  hint "See $TEMPLATES_DIR/nuxlper.conf.build_fresh_nuxeo_container and add contents to your nuxlper.conf"
+  cat "$TEMPLATES_DIR/nuxlper.conf.build_fresh_nuxeo_container"
 }
 
 function load_conf_file() {
