@@ -232,6 +232,13 @@ function update_nuxeo_conf() {
     else
       echo "mail.from='"$NUXLPER_SMTP_MAIL_FROM"'" >> "$CONF_FILE"
     fi
+
+    # Enable JPDA remote debugging
+    if grep -q "^#\?JAVA_OPTS=.*jdwp=transport=dt_socket" "$CONF_FILE"; then
+      sed -i "s|^#\?JAVA_OPTS=.*jdwp=transport=dt_socket.*|JAVA_OPTS=\$JAVA_OPTS -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=\*:8787|" "$CONF_FILE"
+    else
+      echo "JAVA_OPTS=\$JAVA_OPTS -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=\*:8787" >> "$CONF_FILE"
+    fi
   '
   ok
 }
