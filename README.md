@@ -12,6 +12,7 @@ options in nuxeo.conf and register the studio instance.
 - [Building the archive](#building-the-archive)
 - [Using Nuxlper](#using-nuxlper)
   - [Initializing from scratch](#initializing-from-scratch)
+- [Performing Nuxeo hot reload](#performing-nuxeo-hot-reload)
 
 ## Getting started
 
@@ -26,14 +27,14 @@ Archive lays in [build/dist](build/dist) folder.
 
 ## Using Nuxlper
 
+### Initializing from scratch
+
 ```bash
 # unpack your archive
 # tar -xf ...
 # Use init script if you want
 ./init_structure.sh
 ```
-
-### Initializing from scratch
 
 Now you are ready to configure _nuxlper.conf_ then launch the script you want.
 - **00_install_all.sh**: execute the three scripts below! 
@@ -44,9 +45,16 @@ Now you are ready to configure _nuxlper.conf_ then launch the script you want.
 👉You have Nuxeo environment ready to use and ready for modules installation
 - **02_install_nuxeo_items.sh**: install a few standard module from market place, install your studio project and also install local custom modules
 - **03_post_install.sh**: a script to be executed after the 02 script. Can be for example users and groups creation.
+- **04_nuxeo_hot_reload.sh**: a script to be executed after the 02 script. Can be for example users and groups creation.
 
-### Perform a hot reload
-🚧
+### Performing Nuxeo hot reload
+You can use the following command to perform a Nuxeo hot reload
+```bash
+tools/install_nuxeo_items.sh --reload
+# or
+tools/install_nuxeo_items.sh -r
+```
+If you used the _init_structure.sh_ you can launch _04_nuxeo_hot_reload.sh_. 
 
 ## Next work
 💡I planned to add a tool to build an docker image after _01_build_fresh_nuxeo_container_.
