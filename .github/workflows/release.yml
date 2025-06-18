@@ -38,6 +38,6 @@ jobs:
 
       - name: Create new release
         run: |
-          gh release create latest --title "${{ steps.sha.outputs.sha }}" --notes "Release for commit ${{ steps.sha.outputs.sha }}" ./path/to/artifact
+          gh release create latest --title "${{ steps.sha.outputs.sha }}" --notes "Release for commit ${{ steps.sha.outputs.sha }}" build/dist/nuxlper.tar
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
