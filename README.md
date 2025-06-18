@@ -14,6 +14,7 @@ options in nuxeo.conf and register the studio instance.
   - [Performing Nuxeo hot reload](#performing-nuxeo-hot-reload)
   - [Updating studio project](#updating-studio-project)
 - [Next work](#next-work)
+- [About this project](#about-this-project)
 - [Author](#author)
 
 ## Getting started
@@ -68,8 +69,20 @@ tools/install_nuxeo_items.sh -so
 ```
 If you used the _init_structure.sh_ you can launch _05_install_studio_only.sh_.
 
+## About this project
+
+This came to life for many reasons:
+- I was fed up with Nuxeo chrome plugin with the hot reload
+- I wanted to be able to install from scratch all Nuxeo with my customisations
+
+This may look like a Docker compose and in a way you are right because it acts as an orchestrator. But first I like
+the power of Bash and I thought it was very easy to call Nuxeo commands directly.
+
+Basically, when I want to be sure to have everything fresh, I use the "install all" script which gives me a fresh Nuxeo
+environment with my customizations and I don't have to think if there is any data corrupted or not.
+
 ## Next work
-💡I planned to add a tool to build an docker image after _01_build_fresh_nuxeo_container_.
+💡I planned to add a tool to build a docker image after _01_build_fresh_nuxeo_container_.
 
 ## Author
 Quang-Minh TRAN
