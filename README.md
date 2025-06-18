@@ -45,7 +45,8 @@ Now you are ready to configure _nuxlper.conf_ then launch the script you want.
 👉You have Nuxeo environment ready to use and ready for modules installation
 - **02_install_nuxeo_items.sh**: install a few standard module from market place, install your studio project and also install local custom modules
 - **03_post_install.sh**: a script to be executed after the 02 script. Can be for example users and groups creation.
-- **04_nuxeo_hot_reload.sh**: a script to be executed after the 02 script. Can be for example users and groups creation.
+- **04_nuxeo_hot_reload.sh**: Perform the famous Nuxeo hot reload
+- **05_install_studio_only.sh**: remove and install studio project (if studio hot reload does not work properly)
 
 ### Performing Nuxeo hot reload
 You can use the following command to perform a Nuxeo hot reload
@@ -55,6 +56,15 @@ tools/install_nuxeo_items.sh --reload
 tools/install_nuxeo_items.sh -r
 ```
 If you used the _init_structure.sh_ you can launch _04_nuxeo_hot_reload.sh_. 
+
+### updating studio project
+You can use the following command to perform the studio project update
+```bash
+tools/install_nuxeo_items.sh --studio-only
+# or
+tools/install_nuxeo_items.sh -so
+```
+If you used the _init_structure.sh_ you can launch _05_install_studio_only.sh_.
 
 ## Next work
 💡I planned to add a tool to build an docker image after _01_build_fresh_nuxeo_container_.

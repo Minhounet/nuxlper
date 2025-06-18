@@ -6,6 +6,10 @@ function execute_in_container() {
   docker exec "$1" sh -c "$2"
 }
 
+function execute_in_container_and_stay() {
+  docker exec -it "$1" sh -c "$2"
+}
+
 function execute_in_container_as_root() {
   docker exec -u root "$1" sh -c "$2"
 }

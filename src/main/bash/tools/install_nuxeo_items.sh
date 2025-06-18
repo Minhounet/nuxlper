@@ -29,6 +29,7 @@ readonly CONF_PATH=$(dirname "$TOOLS_DIR")/$CONF_FILENAME
 
 declare NUXLPER_NUXEO_MODULES=""
 declare NUXLPER_NUXEO_MARKETPLACE_MODULES="nuxeo-web-ui nuxeo-jsf-ui platform-explorer nuxeo-api-playground"
+declare NUXLPER_NUXEO_SERVER_LOG="/var/log/nuxeo/server.log"
 
 function main() {
   local install_studio_only="n"
@@ -73,6 +74,7 @@ function main() {
   install_custom_modules
 
   start_nuxeo_server "$NUXLPER_NUXEO_CONTAINER_NAME"
+  wait_for_user_input_after_server_start
 }
 
 # ======================================================================================================================
@@ -197,6 +199,13 @@ function is_only_studio_install() {
   else
     return 1
   fi
+}
+
+function wait_for_user_input_after_server_start() {
+  execute_in_container_and_stay "$NUXLPER_NUXEO_CONTAINER_NAME" '
+    echo "➡️🚪Tailing server.log. Press CTRL+C to exit"
+    tail -F '$NUXLPER_NUXEO_SERVER_LOG'
+    '
 }
 
 # ======================================================================================================================
