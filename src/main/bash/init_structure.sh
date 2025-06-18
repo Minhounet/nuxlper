@@ -67,7 +67,11 @@ function generate_conf_file() {
 }
 
 function generate_post_install_script() {
-  info "Build 00_install_all.sh (all in script)"
+  info "Generate post install script"
+  if [[ -f 03_post_install.sh ]]; then
+    info "03_post_install.sh already exist, don't create it"
+    return 0
+  fi
   echo "#!/usr/bin/env bash
   # Write post install script for Nuxeo !" > 03_post_install.sh
   chmod 755 03_post_install.sh
