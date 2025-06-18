@@ -6,13 +6,15 @@ It provides :
 options in nuxeo.conf and register the studio instance.
 - Fake smtp used by the Nuxeo container.
 
-
 ## Table of contents
 - [Getting started](#getting-started)
 - [Building the archive](#building-the-archive)
 - [Using Nuxlper](#using-nuxlper)
   - [Initializing from scratch](#initializing-from-scratch)
-- [Performing Nuxeo hot reload](#performing-nuxeo-hot-reload)
+  - [Performing Nuxeo hot reload](#performing-nuxeo-hot-reload)
+  - [Updating studio project](#updating-studio-project)
+- [Next work](#next-work)
+- [Author](#author)
 
 ## Getting started
 
@@ -57,7 +59,7 @@ tools/install_nuxeo_items.sh -r
 ```
 If you used the _init_structure.sh_ you can launch _04_nuxeo_hot_reload.sh_. 
 
-### updating studio project
+### Updating studio project
 You can use the following command to perform the studio project update
 ```bash
 tools/install_nuxeo_items.sh --studio-only
