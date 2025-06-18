@@ -31,17 +31,19 @@ declare NUXLPER_NUXEO_MODULES=""
 declare NUXLPER_NUXEO_MARKETPLACE_MODULES="nuxeo-web-ui nuxeo-jsf-ui platform-explorer nuxeo-api-playground"
 
 function main() {
+  local install_studio_only="n"
   load_loggers_lib
-
   if [[ $# -ge 1 ]]; then
     case "$1" in
     --help|-h) display_help;;
     --reload|-r)
-    load_nuxeo_lib
-    perform_nuxeo_hot_reload;;
+      load_nuxeo_lib
+      perform_nuxeo_hot_reload
+      return 0;;
+    --studio-only|-so) install_studio_only="y";;
     *) error_and_fail "Unknown command $1" ;;
     esac
-    return 0
+
   fi
 
   if [[ ! -f $CONF_PATH ]]; then
@@ -49,6 +51,8 @@ function main() {
   fi
 
   load_all_libs
+
+
   test_custom_modules_existence
 
   stop_nuxeo_server "$NUXLPER_NUXEO_CONTAINER_NAME"
@@ -88,6 +92,10 @@ function display_help() {
 }
 
 function test_custom_modules_existence() {
+  if is_only_studio_install "ignore modules existence"; then
+    return 0
+  fi
+
   echo "👮Test custom modules existence.."
   for entry in $NUXLPER_NUXEO_MODULES; do
       module_name="${entry%%:*}"
@@ -102,6 +110,10 @@ function test_custom_modules_existence() {
 }
 
 function remove_custom_modules() {
+  if is_only_studio_install "ignore modules removal"; then
+    return 0
+  fi
+
   log_delete "Remove custom modules"
   for entry in $NUXLPER_NUXEO_MODULES; do
     module_name="${entry%%:*}"
@@ -111,6 +123,9 @@ function remove_custom_modules() {
 }
 
 function upload_custom_modules() {
+  if is_only_studio_install "dont upload custom modules"; then
+    return 0
+  fi
   log_upload "Upload custom modules"
   for entry in $NUXLPER_NUXEO_MODULES; do
       module_name="${entry%%:*}"
@@ -123,6 +138,9 @@ function upload_custom_modules() {
 }
 
 function install_custom_modules() {
+  if is_only_studio_install "dont install custom modules"; then
+      return 0
+  fi
   log_install "Install $NUXLPER_NUXEO_MODULES from package.."
   for entry in $NUXLPER_NUXEO_MODULES; do
     module_name="${entry%%:*}"
@@ -133,6 +151,9 @@ function install_custom_modules() {
 }
 
 function install_marketplace_modules() {
+  if is_only_studio_install "dont install marketplace modules"; then
+      return 0
+  fi
   log_download "Install $NUXLPER_NUXEO_MARKETPLACE_MODULES from marketplace.."
   for entry in $NUXLPER_NUXEO_MARKETPLACE_MODULES; do
     install_nuxeo_module "$NUXLPER_NUXEO_CONTAINER_NAME" "$entry"
@@ -162,6 +183,22 @@ function load_all_libs() {
   load_nuxeo_lib
   load_docker_lib
 }
+
+function is_only_studio_install() {
+  if [[ ! -v install_studio_only ]]; then
+    return 1
+  fi
+  if [[ "$install_studio_only" == "y" ]]; then
+    info "Skip this action because installing studio only"
+    if [[ $# -gt 0 ]]; then
+      info "Reason: $1"
+    fi
+    return 0
+  else
+    return 1
+  fi
+}
+
 # ======================================================================================================================
 main "$@"
 # ================================== NOTHING BELOW PLEASE!==============================================================
