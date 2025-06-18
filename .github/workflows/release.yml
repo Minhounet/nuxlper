@@ -1,0 +1,43 @@
+name: Auto Release Latest
+
+on:
+  push:
+    branches:
+      - main  # or your default branch
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up GitHub CLI
+        uses: actions/setup-gh-cli@v1
+
+      - name: Get current commit SHA
+        id: sha
+        run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Run build script
+        run: ./build.sh
+
+      - name: Delete previous release
+        run: |
+          gh release delete latest --yes || true
+          git tag -d latest || true
+          git push origin :refs/tags/latest || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create new tag
+        run: |
+          git tag latest
+          git push origin latest
+
+      - name: Create new release
+        run: |
+          gh release create latest --title "${{ steps.sha.outputs.sha }}" --notes "Release for commit ${{ steps.sha.outputs.sha }}" ./path/to/artifact
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
