@@ -13,6 +13,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Make build.sh executable
+        run: chmod +x ./build.sh
+
       - name: Get current commit SHA
         id: sha
         run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
