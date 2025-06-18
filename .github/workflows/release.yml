@@ -42,6 +42,10 @@ jobs:
 
       - name: Create new release
         run: |
-          gh release create latest --title "${{ steps.sha.outputs.sha }}" --notes "Release for commit ${{ steps.sha.outputs.sha }}" build/dist/nuxlper.tar
+          gh release create latest \
+          --title "${{ steps.commit.outputs.sha }}" \
+          --notes "Release for commit ${{ steps.commit.outputs.sha }}: ${{ steps.commit.outputs.message }}" \
+          --target ${{ github.sha }} \
+          build/dist/nuxlper.tar
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
