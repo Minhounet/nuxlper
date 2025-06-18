@@ -3,7 +3,7 @@ name: Auto Release Latest
 on:
   push:
     branches:
-      - autopublish  # or your default branch
+      - autopublish  # Change to your default branch if different
 
 jobs:
   release:
@@ -13,8 +13,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up GitHub CLI
-        uses: actions/setup-gh-cli@v1
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+          sudo apt-add-repository https://cli.github.com/packages
+          sudo apt update
+          sudo apt install gh -y
 
       - name: Get current commit SHA
         id: sha
@@ -23,7 +27,7 @@ jobs:
       - name: Run build script
         run: ./build.sh
 
-      - name: Delete previous release
+      - name: Delete previous release and tag
         run: |
           gh release delete latest --yes || true
           git tag -d latest || true
