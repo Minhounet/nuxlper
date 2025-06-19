@@ -82,31 +82,46 @@ function generate_install_all_script() {
   echo '
 source '"$CURRENT_DIR"'/nuxlper.conf
 ./01_build_fresh_nuxeo_container.sh
-while true; do
+
+max_attempts=5
+attempt=1
+
+while [ $attempt -le $max_attempts ]; do
+  echo "🚀 Attempt $attempt of $max_attempts to run 02_install_nuxeo_items.sh..."
   ./02_install_nuxeo_items.sh
   return_code=$?
+
   case $return_code in
-    0)
-      echo "Script completed successfully."
+    0|130)
+      echo "✅ Script ended cleanly (code: $return_code)."
       break
-    ;;
-    137)
-      echo "Return code 137 detected: relaunching script..."
-      docker start $NUXLPER_NUXEO_CONTAINER_NAME
-    ;;
+      ;;
     *)
-      echo "ERROR during ein reinstall (code: \$return_code)! Stopping."
+      echo "⚠️ Script failed with code $return_code."
       echo "Hint: see logs using:
       docker logs $NUXLPER_NUXEO_CONTAINER_NAME"
-      exit $return_code
-      break
-    ;;
+
+      echo "🔁 Attempting to restart container if needed..."
+      docker start $NUXLPER_NUXEO_CONTAINER_NAME >/dev/null 2>&1 || true
+
+      attempt=$((attempt + 1))
+      if [ $attempt -gt $max_attempts ]; then
+        echo "❌ Maximum attempts reached. Installation failed with code $return_code."
+        exit $return_code
+      else
+        echo "⏳ Retrying in 5 seconds..."
+        sleep 5
+      fi
+      ;;
   esac
-  # yala
 done
-./03_post_install.sh' > 00_install_all.sh
+
+./03_post_install.sh
+' > 00_install_all.sh
+
   chmod 755 00_install_all.sh
 }
+
 
 function clean() {
   local go_on=n
