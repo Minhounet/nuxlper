@@ -203,9 +203,21 @@ function is_only_studio_install() {
 
 function wait_for_user_input_after_server_start() {
   execute_in_container_and_stay "$NUXLPER_NUXEO_CONTAINER_NAME" '
-    echo "➡️🚪Tailing server.log. Press CTRL+C to exit"
-    tail -F '$NUXLPER_NUXEO_SERVER_LOG'
-    '
+    echo "➡️🚪 Tailing server.log. Press x then Enter to exit"
+
+    tail -F '"$NUXLPER_NUXEO_SERVER_LOG"' &
+    tail_pid=$!
+
+    while true; do
+      read -r -n1 key
+      if [ "$key" = "x" ]; then
+        echo -e "\n❌ Exit requested."
+        kill "$tail_pid"
+        wait "$tail_pid"
+        break
+      fi
+    done
+  '
 }
 
 # ======================================================================================================================
