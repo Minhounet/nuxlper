@@ -32,17 +32,24 @@ function main() {
   generate_nuxeo_hot_reload_script
   generate_install_studio_only_script
   generate_conf_file
+  generate_restart_script
 }
 ########################################################################################################################
 # Functions
 ########################################################################################################################
+function generate_restart_script() {
+  info "Generate restart nuxeo only script"
+  echo "#!/usr/bin/env bash
+tools/install_nuxeo_items.sh --restart" > 06_nuxeo_restart_only.sh
+    chmod 755 06_nuxeo_restart_only.sh
+}
+
 function generate_install_studio_only_script() {
   info "Generate install studio only script"
   echo "#!/usr/bin/env bash
 tools/install_nuxeo_items.sh --studio-only" > 05_nuxeo_install_studio_only.sh
     chmod 755 05_nuxeo_install_studio_only.sh
 }
-
 
 function generate_nuxeo_hot_reload_script() {
   info "Generate Nuxeo hot reload script"

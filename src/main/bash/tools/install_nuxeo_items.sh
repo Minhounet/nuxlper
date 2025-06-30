@@ -33,10 +33,12 @@ declare NUXLPER_NUXEO_SERVER_LOG="/var/log/nuxeo/server.log"
 
 function main() {
   local install_studio_only="n"
+  local restart_nuxeo_only="n"
   load_loggers_lib
   if [[ $# -ge 1 ]]; then
     case "$1" in
     --help|-h) display_help;;
+    --restart|-ro) restart_nuxeo_only="y";;
     --reload|-r)
       load_nuxeo_lib
       perform_nuxeo_hot_reload
@@ -53,6 +55,11 @@ function main() {
 
   load_all_libs
 
+  if [[ "$restart_nuxeo_only" == "y" ]]; then
+    restart_nuxeo_server "$NUXLPER_NUXEO_CONTAINER_NAME"
+    wait_for_user_input_after_server_start
+    return 0
+  fi
 
   test_custom_modules_existence
 
@@ -179,11 +186,15 @@ function load_docker_lib() {
   source "$LIB_DIR/docker.sh"
 }
 function load_all_libs() {
+  load_conf
+  load_nuxeo_lib
+  load_docker_lib
+}
+
+function load_conf() {
   # 💡no need to load loggers as it already done in main.
   # shellcheck disable=SC1090
   source "${CONF_PATH}"
-  load_nuxeo_lib
-  load_docker_lib
 }
 
 function is_only_studio_install() {

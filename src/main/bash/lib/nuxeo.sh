@@ -48,6 +48,12 @@ function start_nuxeo_server() {
   ok
 }
 
+function restart_nuxeo_server() {
+  echo "🛑➡️🟢Restart local server.."
+  docker exec "$1" sh -c "nuxeoctl restart"
+  ok
+}
+
 function remove_nuxeo_module() {
   docker exec "$1" sh -c "nuxeoctl mp-remove --accept yes $2 || true"
 }
