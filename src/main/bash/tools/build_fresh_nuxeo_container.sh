@@ -248,7 +248,6 @@ function register_nuxeo_instance() {
   docker exec "$NUXLPER_NUXEO_CONTAINER_NAME"  bash -c '
   echo '"$NUXLPER_NUXEO_INSTANCE_USERNAME"' >> /tmp/peppa
   echo '"$NUXLPER_NUXEO_INSTANCE_TOKEN"' >> /tmp/peppa
-  echo '"$NUXLPER_NUXEO_INSTANCE_PROJECT"' >> /tmp/peppa
   echo '"$NUXLPER_NUXEO_INSTANCE_INSTANCE_TYPE"' >> /tmp/peppa
   echo '"$NUXLPER_NUXEO_INSTANCE_DESCRIPTION"' >> /tmp/peppa
   cat /tmp/peppa
