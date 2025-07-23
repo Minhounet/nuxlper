@@ -105,6 +105,7 @@ function check_parameters() {
   require_value "NUXLPER_NUXEO_INSTANCE_PROJECT"
   require_value "NUXLPER_NUXEO_INSTANCE_INSTANCE_TYPE"
   require_value "NUXLPER_NUXEO_INSTANCE_DESCRIPTION"
+  require_value "NUXLPER_NUXEO_CUSTOM_BUNDLES_MAPPING_PATH"
   ok
 }
 
@@ -126,6 +127,8 @@ function pull_nuxeo_image() {
 
 # TODO can be extracted to docker.sh but not easy
 function run_new_nuxeo_container() {
+  info "Create mapping custom bundles $NUXLPER_NUXEO_CUSTOM_BUNDLES_MAPPING_PATH"
+  mkdir -p "$NUXLPER_NUXEO_CUSTOM_BUNDLES_MAPPING_PATH"
   attempt "run Nuxeo container"
   if docker ps -a --format '{{.Names}}' | grep -wq "$NUXLPER_NUXEO_CONTAINER_NAME"; then
       echo "A container named '$NUXLPER_NUXEO_CONTAINER_NAME' already exists."
@@ -133,13 +136,13 @@ function run_new_nuxeo_container() {
       if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
           docker rm -f "$NUXLPER_NUXEO_CONTAINER_NAME"
           info "Old container removed. Starting a new one..."
-          docker run -d --name "$NUXLPER_NUXEO_CONTAINER_NAME" -e NUXEO_DEV=true -p 8080:8080 -p 8787:8787 "$NUXLPER_NUXEO_IMAGE"
+          docker run -d --name "$NUXLPER_NUXEO_CONTAINER_NAME" -e NUXEO_DEV=true -p 8080:8080 -p 8787:8787 -v "$NUXLPER_NUXEO_CUSTOM_BUNDLES_MAPPING_PATH":/opt/nuxeo/server/templates/custom/bundles "$NUXLPER_NUXEO_IMAGE"
       else
           info "Use existing one"
       fi
   else
       info "No existing container named '$NUXLPER_NUXEO_CONTAINER_NAME'. Starting a new one..."
-      docker run -d --name "$NUXLPER_NUXEO_CONTAINER_NAME" -e NUXEO_DEV=true -p 8080:8080 -p 8787:8787 "$NUXLPER_NUXEO_IMAGE"
+      docker run -d --name "$NUXLPER_NUXEO_CONTAINER_NAME" -e NUXEO_DEV=true -p 8080:8080 -p 8787:8787 -v "$NUXLPER_NUXEO_CUSTOM_BUNDLES_MAPPING_PATH":/opt/nuxeo/server/templates/custom/bundles "$NUXLPER_NUXEO_IMAGE"
       ok
   fi
 }
