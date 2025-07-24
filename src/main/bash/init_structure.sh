@@ -33,10 +33,27 @@ function main() {
   generate_install_studio_only_script
   generate_conf_file
   generate_restart_script
+
+  info "Generate utilities"
+  generate_instance_accesses
 }
 ########################################################################################################################
 # Functions
 ########################################################################################################################
+function generate_instance_accesses() {
+  info "Generate nuxeo simple access"
+  echo '#!/usr/bin/env bash
+  source '"$CURRENT_DIR"'/nuxlper.conf
+  docker exec -it $NUXLPER_NUXEO_CONTAINER_NAME bash' > b
+  chmod 755 b
+
+  info "Generate nuxeo root access"
+  echo '#!/usr/bin/env bash
+  source '"$CURRENT_DIR"'/nuxlper.conf
+  docker exec -u root -it $NUXLPER_NUXEO_CONTAINER_NAME bash' > rb
+  chmod 755 rb
+}
+
 function generate_restart_script() {
   info "Generate restart nuxeo only script"
   echo "#!/usr/bin/env bash
