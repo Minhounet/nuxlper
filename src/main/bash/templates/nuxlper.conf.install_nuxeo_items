@@ -3,3 +3,6 @@
 ########################################################################################################################
 NUXLPER_NUXEO_STUDIO_MODULE=socle-ged-nuc-edf # mandatory your studio project
 NUXLPER_NUXEO_MODULES="peppapig:/mnt/path/to/peppa.zip george:/mnt/path/to/georges.zip" # Optional
+
+# Can be anything, in the example we launch chrome
+NUXLPER_INSTALL_POST_ACTION="\"/mnt/c/Program Files/Google/Chrome/Application/chrome.exe\" http://localhost:8080" # optional

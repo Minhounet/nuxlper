@@ -30,6 +30,7 @@ readonly CONF_PATH=$(dirname "$TOOLS_DIR")/$CONF_FILENAME
 declare NUXLPER_NUXEO_MODULES=""
 declare NUXLPER_NUXEO_MARKETPLACE_MODULES="nuxeo-web-ui nuxeo-jsf-ui platform-explorer nuxeo-api-playground"
 declare NUXLPER_NUXEO_SERVER_LOG="/var/log/nuxeo/server.log"
+declare NUXLPER_INSTALL_POST_ACTION=""
 
 function main() {
   local install_studio_only="n"
@@ -82,6 +83,8 @@ function main() {
 
   start_nuxeo_server "$NUXLPER_NUXEO_CONTAINER_NAME"
   wait_for_user_input_after_server_start
+
+  launch_browser
 }
 
 # ======================================================================================================================
@@ -229,6 +232,12 @@ function wait_for_user_input_after_server_start() {
       fi
     done
   '
+}
+
+function launch_browser() {
+  if [[ -n "$NUXLPER_INSTALL_POST_ACTION" ]]; then
+    eval "$NUXLPER_INSTALL_POST_ACTION"
+  fi
 }
 
 # ======================================================================================================================
