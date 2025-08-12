@@ -84,7 +84,7 @@ function main() {
   start_nuxeo_server "$NUXLPER_NUXEO_CONTAINER_NAME"
   wait_for_user_input_after_server_start
 
-  launch_browser
+  launch_post_action
 }
 
 # ======================================================================================================================
@@ -234,7 +234,7 @@ function wait_for_user_input_after_server_start() {
   '
 }
 
-function launch_browser() {
+function launch_post_action() {
   if [[ -n "$NUXLPER_INSTALL_POST_ACTION" ]]; then
     eval "$NUXLPER_INSTALL_POST_ACTION"
   fi
