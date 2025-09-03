@@ -27,6 +27,8 @@ readonly CONF_PATH=$(dirname "$TOOLS_DIR")/$CONF_FILENAME
 readonly FAKE_SMTP_IMAGE=haravich/fake-smtp-server
 readonly FAKE_SMTP_PORT=1025
 
+readonly POSTGRESQL_IMAGE=postgres
+
 readonly SERVER_LOG_READY_PATTERN="= Component Loading Status: Pending: 0 / Missing: 0 / Unstarted: 0"
 
 # Parameters to declare in nuxlper.conf
@@ -54,15 +56,19 @@ function main() {
   load_conf_file
   check_parameters
 
+  pull_postgresql_image
   pull_fake_smtp_image
   pull_nuxeo_image
 
   run_new_nuxeo_container
   run_new_fake_smtp_container
+  run_new_postgresql_container
   join_containers_in_same_network
 
   update_nuxeo_conf
   register_nuxeo_instance
+  cp_postgresql_driver_to_nuxeo_lib
+  
   wait_for_server_start
 }
 
@@ -106,6 +112,16 @@ function check_parameters() {
   require_value "NUXLPER_NUXEO_INSTANCE_INSTANCE_TYPE"
   require_value "NUXLPER_NUXEO_INSTANCE_DESCRIPTION"
   require_value "NUXLPER_NUXEO_CUSTOM_BUNDLES_MAPPING_PATH"
+  ok
+}
+
+function  cp_postgresql_driver_to_nuxeo_lib() {
+  docker exec $NUXLPER_NUXEO_CONTAINER_NAME sh -c "cp /opt/nuxeo/server/templates/postgresql/lib/postgresql-*.jar /opt/nuxeo/server/lib/"
+}
+
+function pull_postgresql_image() {
+  log_download "Pull postgresql image"
+  docker pull $POSTGRESQL_IMAGE
   ok
 }
 
@@ -166,6 +182,27 @@ function run_new_fake_smtp_container() {
   fi
 }
 
+
+function run_new_postgresql_container() {
+  attempt "run postgresql container"
+  if docker ps -a --format '{{.Names}}' | grep -wq "$POSTGRESQL_IMAGE"; then
+      echo "A container named '$POSTGRESQL_IMAGE' already exists."
+      read -p "🤔Do you want to remove it and start a new one? (y/n): " choice
+      if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
+          docker rm -f "$POSTGRESQL_IMAGE"
+          info "Old container removed. Starting a new one..."
+          docker run --name $POSTGRESQL_IMAGE -p 5432:5432 -e POSTGRES_PASSWORD=nuxeo -e POSTGRES_USER=nuxeo -e POSTGRES_DB=nuxeo -d postgres 
+      else
+          info "Use existing one"
+      fi
+  else
+      info "No existing container named '$POSTGRESQL_IMAGE'. Starting a new one..."
+          docker run --name $POSTGRESQL_IMAGE -p 5432:5432 -e POSTGRES_PASSWORD=nuxeo -e POSTGRES_USER=nuxeo -e POSTGRES_DB=nuxeo -d postgres 
+      ok
+  fi
+  
+}
+
 function join_containers_in_same_network() {
   info "🔗Link containers in same network"
   if docker network ls | grep -wq "$NUXLPER_NETWORK_NAME"; then
@@ -181,6 +218,7 @@ function join_containers_in_same_network() {
   echo "⛓️Link $NUXLPER_FAKE_SMTP_CONTAINER_NAME with $NUXLPER_NUXEO_CONTAINER_NAME in $NUXLPER_NETWORK_NAME"
   docker network connect "$NUXLPER_NETWORK_NAME" "$NUXLPER_FAKE_SMTP_CONTAINER_NAME"
   docker network connect "$NUXLPER_NETWORK_NAME" "$NUXLPER_NUXEO_CONTAINER_NAME"
+  docker network connect "$NUXLPER_NETWORK_NAME" "$POSTGRESQL_IMAGE"
   ok
 }
 
@@ -242,7 +280,47 @@ function update_nuxeo_conf() {
     else
       echo "JAVA_OPTS=\$JAVA_OPTS -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=\*:8787" >> "$CONF_FILE"
     fi
-  '
+
+    # postgresql
+    if grep -q "^#\?nuxeo.db.name=.*" "$CONF_FILE"; then
+      sed -i "s|^#\?nuxeo.db.name=.*|nuxeo.db.name=nuxeo|" "$CONF_FILE"
+    else
+      echo "nuxeo.db.name=nuxeo" >> "$CONF_FILE"
+    fi
+    
+    if grep -q "^#\?nuxeo.db.user=.*" "$CONF_FILE"; then
+      sed -i "s|^#\?nuxeo.db.user=.*|nuxeo.db.user=nuxeo|" "$CONF_FILE"
+    else
+      echo "nuxeo.db.user=nuxeo" >> "$CONF_FILE"
+    fi
+    if grep -q "^#\?nuxeo.db.password=.*" "$CONF_FILE"; then
+      sed -i "s|^#\?nuxeo.db.password=.*|nuxeo.db.password=nuxeo|" "$CONF_FILE"
+    else
+      echo "nuxeo.db.password=nuxeo" >> "$CONF_FILE"
+    fi
+    if grep -q "^#\?nuxeo.db.host=.*" "$CONF_FILE"; then
+      sed -i "s|^#\?nuxeo.db.host=.*|nuxeo.db.host=postgres|" "$CONF_FILE"
+    else
+      echo "nuxeo.db.host=postgres" >> "$CONF_FILE"
+    fi
+    if grep -q "^#\?nuxeo.db.port=.*" "$CONF_FILE"; then
+      sed -i "s|^#\?nuxeo.db.port=.*|nuxeo.db.port=5432|" "$CONF_FILE"
+    else
+      echo "nuxeo.db.port=5432" >> "$CONF_FILE"
+    fi
+
+    if grep -q "^#\?nuxeo.db.jdbc.url=.*" "$CONF_FILE"; then
+      sed -i "s|^#\?nuxeo.db.jdbc.url=.*|nuxeo.db.jdbc.url=jdbc:postgresql://postgres:5432/nuxeo|" "$CONF_FILE"
+    else
+      echo "nuxeo.db.jdbc.url=jdbc:postgresql://postgres:5432/nuxeo" >> "$CONF_FILE"
+    fi  
+    
+    if grep -q "^#\?nuxeo.db.driver=.*" "$CONF_FILE"; then
+      sed -i "s|^#\?nuxeo.db.driver=.*|nuxeo.db.driver=org.postgresql.Driver|" "$CONF_FILE"
+    else
+      echo "nuxeo.db.driver=org.postgresql.Driver" >> "$CONF_FILE"
+    fi    
+    '
   ok
 }
 
