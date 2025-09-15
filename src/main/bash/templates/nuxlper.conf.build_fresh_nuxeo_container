@@ -5,6 +5,8 @@
 NUXLPER_NUXEO_IMAGE=docker-private.packages.nuxeo.com/nuxeo/nuxeo:2023
 NUXLPER_PULL_NUXEO_IMAGE=y
 NUXLPER_NUXEO_CONTAINER_NAME=nuxlperxeo # Choose the name of you Nuxeo container name
+# optional container options
+NUXLPER_NUXEO_CONTAINER_NAME_CUSTOM_OPTIONS="-e EXAMPLE_USER=peppa -e EXAMPLE_PASSWORD=peppassword"
 
 # Proxy (Optional)
 NUXLPER_NUXEO_PROXY_HOST=
