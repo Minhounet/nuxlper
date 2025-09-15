@@ -28,7 +28,6 @@ readonly TEMPLATES_DIR=$(dirname "$TOOLS_DIR")/templates
 readonly CONF_PATH=$(dirname "$TOOLS_DIR")/$CONF_FILENAME
 
 declare NUXLPER_NUXEO_MODULES=""
-declare NUXLPER_NUXEO_MARKETPLACE_MODULES="nuxeo-web-ui nuxeo-jsf-ui platform-explorer nuxeo-api-playground"
 declare NUXLPER_NUXEO_SERVER_LOG="/var/log/nuxeo/server.log"
 declare NUXLPER_INSTALL_POST_ACTION=""
 
@@ -76,7 +75,6 @@ function main() {
   execute_in_container "$NUXLPER_NUXEO_CONTAINER_NAME" "rm -rf /tmp/nuxeo/*"
   ok
 
-  install_marketplace_modules
   install_studio_module
   upload_custom_modules
   install_custom_modules
@@ -158,17 +156,6 @@ function install_custom_modules() {
     module_name="${entry%%:*}"
     zip_name="$module_name.zip"
     install_nuxeo_module "$NUXLPER_NUXEO_CONTAINER_NAME" "/tmp/$zip_name"
-  done
-  ok
-}
-
-function install_marketplace_modules() {
-  if is_only_studio_install "dont install marketplace modules"; then
-      return 0
-  fi
-  log_download "Install $NUXLPER_NUXEO_MARKETPLACE_MODULES from marketplace.."
-  for entry in $NUXLPER_NUXEO_MARKETPLACE_MODULES; do
-    install_nuxeo_module "$NUXLPER_NUXEO_CONTAINER_NAME" "$entry"
   done
   ok
 }
