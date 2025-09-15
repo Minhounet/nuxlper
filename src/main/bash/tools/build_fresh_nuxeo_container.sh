@@ -31,6 +31,9 @@ readonly POSTGRESQL_IMAGE=postgres
 
 readonly SERVER_LOG_READY_PATTERN="= Component Loading Status: Pending: 0 / Missing: 0 / Unstarted: 0"
 
+# Nuxeo container
+declare NUXLPER_NUXEO_CONTAINER_NAME_CUSTOM_OPTIONS=""
+
 # Parameters to declare in nuxlper.conf
 declare NUXLPER_NUXEO_PROXY_HOST=""
 declare NUXLPER_NUXEO_PROXY_PORT=""
@@ -152,13 +155,13 @@ function run_new_nuxeo_container() {
       if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
           docker rm -f "$NUXLPER_NUXEO_CONTAINER_NAME"
           info "Old container removed. Starting a new one..."
-          docker run -d --name "$NUXLPER_NUXEO_CONTAINER_NAME" -e NUXEO_DEV=true -p 8080:8080 -p 8787:8787 -v "$NUXLPER_NUXEO_CUSTOM_BUNDLES_MAPPING_PATH":/opt/nuxeo/server/templates/custom/bundles "$NUXLPER_NUXEO_IMAGE"
+     docker run -d --name "$NUXLPER_NUXEO_CONTAINER_NAME" $NUXLPER_NUXEO_CONTAINER_NAME_CUSTOM_OPTIONS -e NUXEO_DEV=true -p 8080:8080 -p 8787:8787 -v "$NUXLPER_NUXEO_CUSTOM_BUNDLES_MAPPING_PATH":/opt/nuxeo/server/templates/custom/bundles "$NUXLPER_NUXEO_IMAGE"
       else
           info "Use existing one"
       fi
   else
       info "No existing container named '$NUXLPER_NUXEO_CONTAINER_NAME'. Starting a new one..."
-      docker run -d --name "$NUXLPER_NUXEO_CONTAINER_NAME" -e NUXEO_DEV=true -p 8080:8080 -p 8787:8787 -v "$NUXLPER_NUXEO_CUSTOM_BUNDLES_MAPPING_PATH":/opt/nuxeo/server/templates/custom/bundles "$NUXLPER_NUXEO_IMAGE"
+      docker run -d --name "$NUXLPER_NUXEO_CONTAINER_NAME" $NUXLPER_NUXEO_CONTAINER_NAME_CUSTOM_OPTIONS -e NUXEO_DEV=true -p 8080:8080 -p 8787:8787 -v "$NUXLPER_NUXEO_CUSTOM_BUNDLES_MAPPING_PATH":/opt/nuxeo/server/templates/custom/bundles "$NUXLPER_NUXEO_IMAGE"
       ok
   fi
 }
