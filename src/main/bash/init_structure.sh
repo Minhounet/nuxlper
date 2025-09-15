@@ -79,8 +79,10 @@ tools/install_nuxeo_items.sh --reload
 function link_needed_scripts() {
    info "Get $CURRENT_DIR/tools/build_fresh_nuxeo_container.sh "
    ln -sf "$CURRENT_DIR"/tools/build_fresh_nuxeo_container.sh 01_build_fresh_nuxeo_container.sh
+   info "Get $CURRENT_DIR/tools/install_default_modules.sh"
+   ln -sf "$CURRENT_DIR"/tools/install_default_modules.sh  02_install_default_modules.sh
    info "Get $CURRENT_DIR/tools/install_nuxeo_items.sh"
-   ln -sf "$CURRENT_DIR"/tools/install_nuxeo_items.sh  02_install_nuxeo_items.sh
+   ln -sf "$CURRENT_DIR"/tools/install_nuxeo_items.sh  03_install_nuxeo_items.sh
 }
 
 function generate_conf_file() {
@@ -106,13 +108,14 @@ function generate_install_all_script() {
   echo '
 source '"$CURRENT_DIR"'/nuxlper.conf
 ./01_build_fresh_nuxeo_container.sh
+./02_install_default_modules.sh
 
 max_attempts=5
 attempt=1
 
 while [ $attempt -le $max_attempts ]; do
-  echo "🚀 Attempt $attempt of $max_attempts to run 02_install_nuxeo_items.sh..."
-  ./02_install_nuxeo_items.sh
+  echo "🚀 Attempt $attempt of $max_attempts to run 03_install_nuxeo_items.sh..."
+  ./03_install_nuxeo_items.sh
   return_code=$?
 
   case $return_code in
@@ -156,7 +159,7 @@ function clean() {
     info "action is cancelled"
     return 0;
   fi
-  rm -rf 00_install_all.sh 01_build_fresh_nuxeo_container.sh 02_install_nuxeo_items.sh
+  rm -rf 00_install_all.sh 01_build_fresh_nuxeo_container.sh 03_install_nuxeo_items.sh
   info "03_post_install.sh and nulxper.conf are not removed, please remove it by yourself if needed"
 }
 
