@@ -23,6 +23,7 @@ readonly TEMPLATES_DIR=$(dirname "$TOOLS_DIR")/templates
 readonly CONF_FILENAME="nuxlper.conf"
 # shellcheck disable=SC2155
 readonly CONF_PATH=$(dirname "$TOOLS_DIR")/$CONF_FILENAME
+readonly LOCAL_INSTANCE_CLID_PATH=$(dirname "$TOOLS_DIR")/instance.clid
 
 readonly FAKE_SMTP_IMAGE=haravich/fake-smtp-server
 readonly FAKE_SMTP_PORT=1025
@@ -69,9 +70,12 @@ function main() {
   join_containers_in_same_network
 
   update_nuxeo_conf
-  register_nuxeo_instance
+
+  register_nuxeo_instance_if_needed
   cp_postgresql_driver_to_nuxeo_lib
   
+  download_instance_clid_if_not_existing
+
   wait_for_server_start
 }
 
@@ -327,7 +331,25 @@ function update_nuxeo_conf() {
   ok
 }
 
-function register_nuxeo_instance() {
+function download_instance_clid_if_not_existing() {
+  if [[ -f "$LOCAL_INSTANCE_CLID_PATH" ]]; then
+    info "$LOCAL_INSTANCE_CLID_PATH already exist, don't download it"
+    return 0
+  fi
+
+  attempt "Get instance.clid from nuxeo instance.."
+  docker cp "$NUXLPER_NUXEO_CONTAINER_NAME:/var/lib/nuxeo/instance.clid" "$LOCAL_INSTANCE_CLID_PATH"
+  ok
+}
+
+function register_nuxeo_instance_if_needed() {
+
+  if [[ -f "$LOCAL_INSTANCE_CLID_PATH" ]]; then
+    info "$LOCAL_INSTANCE_CLID_PATH already exist, Upload it to container $NUXLPER_NUXEO_CONTAINER_NAME"
+    docker cp "$LOCAL_INSTANCE_CLID_PATH" "$NUXLPER_NUXEO_CONTAINER_NAME:/var/lib/nuxeo/instance.clid" 
+    return 0
+  fi
+
   echo "✒️Register nuxeo instance on connect.nuxeo.com"
   docker exec "$NUXLPER_NUXEO_CONTAINER_NAME"  bash -c '
   echo '"$NUXLPER_NUXEO_INSTANCE_USERNAME"' >> /tmp/peppa
