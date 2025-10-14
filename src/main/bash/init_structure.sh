@@ -72,8 +72,8 @@ function generate_nuxeo_hot_reload_script() {
   info "Generate Nuxeo hot reload script"
   echo "#!/usr/bin/env bash
 tools/install_nuxeo_items.sh --reload
-" > 04_nuxeo_hot_reload.sh
-  chmod 755 04_nuxeo_hot_reload.sh
+" > 05_nuxeo_hot_reload.sh
+  chmod 755 05_nuxeo_hot_reload.sh
 }
 
 function link_needed_scripts() {
@@ -94,13 +94,13 @@ function generate_conf_file() {
 
 function generate_post_install_script() {
   info "Generate post install script"
-  if [[ -f 03_post_install.sh ]]; then
-    info "03_post_install.sh already exist, don't create it"
+  if [[ -f 04_post_install ]]; then
+    info "04_post_install already exist, don't create it"
     return 0
   fi
   echo "#!/usr/bin/env bash
-  # Write post install script for Nuxeo !" > 03_post_install.sh
-  chmod 755 03_post_install.sh
+  # Write post install script for Nuxeo !" > 04_post_install
+  chmod 755 04_post_install
 }
 
 function generate_install_all_script() {
@@ -143,7 +143,7 @@ while [ $attempt -le $max_attempts ]; do
   esac
 done
 
-./03_post_install.sh
+./04_post_install
 ' > 00_install_all.sh
 
   chmod 755 00_install_all.sh
@@ -160,7 +160,7 @@ function clean() {
     return 0;
   fi
   rm -rf 00_install_all.sh 01_build_fresh_nuxeo_container.sh 03_install_nuxeo_items.sh
-  info "03_post_install.sh and nulxper.conf are not removed, please remove it by yourself if needed"
+  info "04_post_install and nulxper.conf are not removed, please remove it by yourself if needed"
 }
 
 ########################################################################################################################
