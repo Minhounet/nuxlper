@@ -1,12 +1,13 @@
 # Nuxlper
-Nuxlper is bash-based set of tools to help the Nuxeo
+Nuxlper is bash-based set of tools 🔧🔨 to help the Nuxeo
 developer.
 It provides :
 - Nuxeo docker container ready to use with a few
-options in nuxeo.conf and register the studio instance.
+options in nuxeo.conf and register the studio 🎬 instance.
 - Fake smtp used by the Nuxeo container.
+- Postgresql docker container used by Nuxeo
 
-## Table of contents
+## 📖 Table of contents
 - [Getting started](#getting-started)
 - [Building the archive](#building-the-archive)
 - [Using Nuxlper](#using-nuxlper)
@@ -45,11 +46,14 @@ Now you are ready to configure _nuxlper.conf_ then launch the script you want.
   - enable jpda
   - add proxy if needed
   - configure fake-smtp
+  - configure postgresql access
+  - ...
 👉You have Nuxeo environment ready to use and ready for modules installation
 - **02_install_nuxeo_items.sh**: install a few standard module from market place, install your studio project and also install local custom modules
 - **03_post_install.sh**: a script to be executed after the 02 script. Can be for example users and groups creation.
-- **04_nuxeo_hot_reload.sh**: Perform the famous Nuxeo hot reload
-- **05_install_studio_only.sh**: remove and install studio project (if studio hot reload does not work properly)
+- **_nuxeo_hot_reload.sh**: Perform the famous Nuxeo hot reload
+- **_nuxeo_install_studio_only.sh**: remove and install studio project (if studio hot reload does not work properly)
+- **_nuxeo_restart_only.sh**: restart Nuxeo server
 
 ### Performing Nuxeo hot reload
 You can use the following command to perform a Nuxeo hot reload
@@ -58,7 +62,7 @@ tools/install_nuxeo_items.sh --reload
 # or
 tools/install_nuxeo_items.sh -r
 ```
-If you used the _init_structure.sh_ you can launch _04_nuxeo_hot_reload.sh_. 
+If you used the _init_structure.sh_ you can launch _nuxeo_hot_reload.sh_. 
 
 ### Updating studio project
 You can use the following command to perform the studio project update
@@ -67,12 +71,12 @@ tools/install_nuxeo_items.sh --studio-only
 # or
 tools/install_nuxeo_items.sh -so
 ```
-If you used the _init_structure.sh_ you can launch _05_install_studio_only.sh_.
+If you used the _init_structure.sh_ you can launch _install_studio_only.sh_.
 
 ## About this project
 
 This came to life for many reasons:
-- I was fed up with Nuxeo chrome plugin with the hot reload
+- I was fed up 😡 with Nuxeo chrome plugin with the hot reload
 - I wanted to be able to install from scratch all Nuxeo with my customisations
 
 This may look like a Docker compose and in a way you are right because it acts as an orchestrator. But first I like
@@ -80,9 +84,6 @@ the power of Bash and I thought it was very easy to call Nuxeo commands directly
 
 Basically, when I want to be sure to have everything fresh, I use the "install all" script which gives me a fresh Nuxeo
 environment with my customizations and I don't have to think if there is any data corrupted or not.
-
-## Next work
-💡I planned to add a tool to build a docker image after _01_build_fresh_nuxeo_container_.
 
 ## Author
 Quang-Minh TRAN
